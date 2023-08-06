@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { createDeepProxy } from 'rct-state';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { createDeepProxy, observable } from 'rct-state';
 
 const data = {
   level1: {
@@ -23,10 +23,11 @@ const data = {
   },
 };
 
-const proxyData = createDeepProxy(data);
+const proxyData = observable(data);
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const level2_2 = proxyData.level1.level2.use();
+  console.log('### level2_2', level2_2);
 
   React.useEffect(() => {
     const printData = {
@@ -52,7 +53,15 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <TouchableOpacity
+        onPress={() =>
+          proxyData.level1.level2.set({
+            value: Date.now().toString(),
+          })
+        }
+      >
+        <Text>Result: {level2_2.value}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
