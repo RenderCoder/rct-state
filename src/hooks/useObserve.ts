@@ -1,25 +1,25 @@
 import { useMount } from './useMount';
-import { useState } from './useState';
 import type { BehaviorSubject } from 'rxjs';
 import { generateSubForSpecificChange } from '../utils/subscribe';
 
-interface UseSelectorConfig<T> {
-  selectorFunction: (state: T) => any;
+interface UseObserveConfig<T, P = any> {
+  selectorFunction: (state: T) => P;
   subSource: BehaviorSubject<any>;
+  onChangeFunction: (value: P) => void;
 }
 
-export function useSelector<T>({
+export function useObserve<T, P>({
   selectorFunction,
   subSource,
-}: UseSelectorConfig<T>) {
-  const [value, setValue] = useState(selectorFunction(subSource.value));
+  onChangeFunction,
+}: UseObserveConfig<T, P>) {
   useMount(() => {
     console.log('use() create sub');
     const sub = generateSubForSpecificChange({
       subject: subSource,
       filter: selectorFunction,
     }).subscribe(([_, next]) => {
-      setValue(next);
+      onChangeFunction(next);
     });
 
     return () => {
@@ -28,6 +28,4 @@ export function useSelector<T>({
       }
     };
   });
-
-  return value;
 }

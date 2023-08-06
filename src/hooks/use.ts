@@ -1,4 +1,3 @@
-import {} from 'react';
 import { get as _get } from 'lodash';
 import { useMount } from './useMount';
 import { useState } from './useState';
@@ -10,7 +9,7 @@ interface UseConfig {
   subSource: BehaviorSubject<any>;
 }
 
-export function use({ keyPath, subSource }: UseConfig) {
+export function useFunc({ keyPath, subSource }: UseConfig) {
   const [value, setValue] = useState(_get(subSource.value, keyPath));
   useMount(() => {
     console.log('use() create sub');

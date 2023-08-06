@@ -1,12 +1,17 @@
 import { BehaviorSubject } from 'rxjs';
-import { get as _get, set as _set } from 'lodash';
+import { set as _set } from 'lodash';
 import { createDeepProxy } from './proxy';
 import type { DeepProxy } from './proxy';
-import { use } from './hooks/use';
+import { useFunc } from './hooks/use';
 import { useSelector } from './hooks/useSelector';
+import { useObserve } from './hooks/useObserve';
 
 type Observable<T> = DeepProxy<T> & {
   useSelector: <R>(selector: (state: T) => R) => R;
+  useObserve: <P>(
+    selector: (state: T) => P,
+    onChange: (value: P) => void
+  ) => void;
 };
 
 // target: const state$ = observable({ settings: { theme: 'dark' } })
@@ -20,6 +25,8 @@ class ObserverableManager<T extends object> {
         switch (property) {
           case 'useSelector':
             return this.useSelector;
+          case 'useObserve':
+            return this.useObserve;
           default:
             return Reflect.get(target, property, receiver);
         }
@@ -40,13 +47,21 @@ class ObserverableManager<T extends object> {
   };
 
   onUse = (keyPath: string[]): T => {
-    return use({ keyPath, subSource: this.subject });
+    return useFunc({ keyPath, subSource: this.subject });
   };
 
   useSelector = (selector: (state: T) => any) => {
     return useSelector({
       selectorFunction: selector,
       subSource: this.subject,
+    });
+  };
+
+  useObserve = <P>(selector: (state: T) => P, onChange: (value: P) => void) => {
+    useObserve<T, P>({
+      selectorFunction: selector,
+      subSource: this.subject,
+      onChangeFunction: onChange,
     });
   };
 }
