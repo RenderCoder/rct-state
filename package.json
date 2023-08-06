@@ -1,7 +1,7 @@
 {
   "name": "rct-state",
-  "version": "0.1.0",
-  "description": "Legend-State style state library with Rx for React",
+  "version": "0.1.4",
+  "description": "Legend-State style state library with Rx for React, this project prioritizes the use of React Native and TypeScript support.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -31,7 +31,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepack": "bob build",
-    "release": "release-it",
+    "release": "release-it patch",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install"
   },
@@ -56,6 +56,7 @@
     "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
+    "@types/lodash": "^4.14.196",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.70.0",
     "commitlint": "^17.0.2",
@@ -155,5 +156,9 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "rxjs": "^7.8.1"
   }
 }
