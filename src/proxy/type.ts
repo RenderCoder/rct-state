@@ -2,7 +2,7 @@ import { Wrapper } from './wrapper';
 
 // @ts-ignore eslint-disable-line react-hooks/exhaustive-deps
 // // @ts-expect-error: Exported type alias 'Unwrap' has or is using private name 'U'.
-type Unwrap<T> = T extends Wrapper<infer U> ? U : T;
+export type Unwrap<T> = T extends Wrapper<infer U> ? U : T;
 
 export type WrapType<T extends object> = {
   get(): T;

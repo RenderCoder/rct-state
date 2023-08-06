@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { set as _set } from 'lodash';
 import { createDeepProxy } from './proxy';
 import type { DeepProxy } from './proxy';
+import type { Unwrap } from './proxy/type';
 import { useFunc } from './hooks/use';
 import { useSelector } from './hooks/useSelector';
 import { useObserve } from './hooks/useObserve';
@@ -10,9 +11,10 @@ type Observable<T> = DeepProxy<T> & {
   useSelector: <R>(selector: (state: T) => R) => R;
   useObserve: <P>(
     selector: (state: T) => P,
-    onChange: (value: P) => void
+    onChange: (value: Unwrap<P>) => void
   ) => void;
   batch: (batchAction: () => void) => void;
+  peek: () => T;
 };
 
 // target: const state$ = observable({ settings: { theme: 'dark' } })
@@ -32,6 +34,8 @@ class ObserverableManager<T extends object> {
             return this.useObserve;
           case 'batch':
             return this.batch;
+          case 'peek':
+            return this.peek;
           default:
             return Reflect.get(target, property, receiver);
         }
@@ -80,6 +84,10 @@ class ObserverableManager<T extends object> {
     batchAction();
     this.subject.next(this.subject.getValue());
     this.batchProcessing = false;
+  };
+
+  peek = () => {
+    return this.subject.getValue();
   };
 }
 

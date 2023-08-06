@@ -36,7 +36,9 @@ export default function App() {
   });
 
   store$.useObserve(
-    () => store$.view.count.peek(),
+    () => {
+      return { count: store$.view.count.peek() };
+    },
     (countValue) => {
       console.log('### useObserve count on change', countValue);
     }
