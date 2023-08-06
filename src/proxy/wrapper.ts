@@ -35,11 +35,11 @@ export class Wrapper<T extends any> {
     return this.value;
   }
 
-  get() {
+  get(): T {
     return _get(this.originalObject, this.keyPath);
   }
 
-  peek() {
+  peek(): T {
     return _get(this.originalObject, this.keyPath);
   }
 
