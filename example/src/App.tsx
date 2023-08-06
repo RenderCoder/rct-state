@@ -30,18 +30,22 @@ export default function App() {
 
   React.useEffect(() => {
     const printData = {
-      'proxyData.level1_1.level2_2': proxyData.level1_1.level2_2,
-      // 'proxyData.level1_1.level2_2.get()': proxyData.level1_1.level2_2.get(),
-      // 'proxyData.level1_1.level2_2.peek()': proxyData.level1_1.level2_2.peek(),
-      // 'proxyData.level1_1.level2_2.test.get()':
-      //   proxyData.level1_1.level2_2.test.get(),
-      // 'proxyData.level1_1.level2_2.test.peek()':
-      //   proxyData.level1_1.level2_2.test.peek(),
-      'proxyData.a.c.d': proxyData.a.c.d,
-      // 'proxyData.a.c.d.get()': proxyData.a.c.d.get(),
-      // 'proxyData.a.c.d.peek()': proxyData.a.c.d.peek(),
-    }
-    console.log('\n### proxyData.level1_1.level2_2.get();', printData);
+      'proxyData.level1_1.level2_2': proxyData.level1_1.level2_2.get(),
+      'proxyData.level1_1.level2_2.get()': proxyData.level1_1.level2_2.get(),
+      'proxyData.level1_1.level2_2.peek()': proxyData.level1_1.level2_2.peek(),
+      'proxyData.level1_1.level2_2.test.get()':
+        proxyData.level1_1.level2_2.test.get(),
+      'proxyData.level1_1.level2_2.test.peek()':
+        proxyData.level1_1.level2_2.test.peek(),
+      'proxyData.a.c.d': proxyData.a.c.d.get(),
+      'proxyData.a.c.d.get()': proxyData.a.c.d.get(),
+      'proxyData.a.c.d.peek()': proxyData.a.c.d.peek(),
+    };
+    console.log(
+      '\n### proxyData.level1_1.level2_2.get();',
+      JSON.stringify(printData, null, 2),
+      printData
+    );
   }, []);
 
   return (
