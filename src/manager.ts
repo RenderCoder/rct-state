@@ -12,6 +12,7 @@ type Observable<T> = DeepProxy<T> & {
     selector: (state: T) => P,
     onChange: (value: P) => void
   ) => void;
+  batch: (batchAction: () => void) => void;
 };
 
 // target: const state$ = observable({ settings: { theme: 'dark' } })
@@ -19,6 +20,8 @@ type Observable<T> = DeepProxy<T> & {
 class ObserverableManager<T extends object> {
   subject: BehaviorSubject<T>;
   _state$: DeepProxy<T>;
+  batchProcessing: boolean = false;
+
   get state$(): Observable<T> {
     return new Proxy(this._state$, {
       get: (target, property: PropertyKey, receiver: any) => {
@@ -27,6 +30,8 @@ class ObserverableManager<T extends object> {
             return this.useSelector;
           case 'useObserve':
             return this.useObserve;
+          case 'batch':
+            return this.batch;
           default:
             return Reflect.get(target, property, receiver);
         }
@@ -43,7 +48,12 @@ class ObserverableManager<T extends object> {
   }
 
   onSet = (value: T, keyPath: string[]) => {
-    this.subject.next(_set(this.subject.getValue(), keyPath, value));
+    if (this.batchProcessing) {
+      _set(this.subject.getValue(), keyPath, value);
+      return;
+    } else {
+      this.subject.next(_set(this.subject.getValue(), keyPath, value));
+    }
   };
 
   onUse = (keyPath: string[]): T => {
@@ -63,6 +73,13 @@ class ObserverableManager<T extends object> {
       subSource: this.subject,
       onChangeFunction: onChange,
     });
+  };
+
+  batch = (batchAction: () => void) => {
+    this.batchProcessing = true;
+    batchAction();
+    this.subject.next(this.subject.getValue());
+    this.batchProcessing = false;
   };
 }
 

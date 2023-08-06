@@ -69,7 +69,13 @@ export default function App() {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => store$.view.count.set(store$.view.count.peek() + 1)}
+        onPress={() => {
+          store$.batch(() => {
+            store$.view.count.set(store$.view.count.peek() + 1);
+            store$.view.count.set(store$.view.count.peek() + 1);
+            store$.view.count.set(store$.view.count.peek() + 1);
+          });
+        }}
       >
         <Text>Result: {count$}</Text>
       </TouchableOpacity>
