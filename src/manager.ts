@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { get as _get, set as _set } from 'lodash';
 import { createDeepProxy } from './proxy';
 import type { DeepProxy } from './proxy';
-import {use} from './hooks/use'
+import { use } from './hooks/use';
 
 type Observable<T> = DeepProxy<T>;
 
@@ -18,13 +18,10 @@ class ObserverableManager<T extends object> {
   }
 
   onSet = (value: T, keyPath: string[]) => {
-    console.log('### manager onSet', { value, keyPath });
     this.subject.next(_set(this.subject.getValue(), keyPath, value));
   };
 
   onUse = (keyPath: string[]): T => {
-    console.log('### manager onSet', { keyPath });
-    // return _get(this.subject.getValue(), keyPath);
     return use({ keyPath, subSource: this.subject });
   };
 }

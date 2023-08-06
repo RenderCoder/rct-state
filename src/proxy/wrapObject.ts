@@ -17,12 +17,10 @@ export function wrapObject<T extends object>(
           return () => _get(originalObject, keyPath);
         case 'set':
           return (value: T) => {
-            console.log('## set()', value, onSet);
             onSet && onSet(value, keyPath);
           };
         case 'use':
           return (): T => {
-            console.log('## use()');
             return onUse(keyPath);
           };
         case '__keyPath':

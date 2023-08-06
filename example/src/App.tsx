@@ -4,6 +4,9 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { createDeepProxy, observable } from 'rct-state';
 
 const data = {
+  view: {
+    count: 0,
+  },
   level1: {
     level2: {
       value: 'original',
@@ -26,8 +29,8 @@ const data = {
 const proxyData = observable(data);
 
 export default function App() {
-  const level2_2 = proxyData.level1.level2.use();
-  console.log('### level2_2', level2_2);
+  const count = proxyData.view.count.use();
+  console.log('### count', count);
 
   React.useEffect(() => {
     const printData = {
@@ -55,12 +58,10 @@ export default function App() {
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() =>
-          proxyData.level1.level2.set({
-            value: Date.now().toString(),
-          })
+          proxyData.view.count.set(proxyData.view.count.peek() + 1)
         }
       >
-        <Text>Result: {level2_2.value}</Text>
+        <Text>Result: {count}</Text>
       </TouchableOpacity>
     </View>
   );

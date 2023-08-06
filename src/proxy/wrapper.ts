@@ -57,12 +57,10 @@ export class Wrapper<T extends any> {
   }
 
   set(value: T) {
-    console.log('set(value:T)', value);
-    this.onSet && this.onSet(value, this.keyPath);
+    this.onSet(value, this.keyPath);
   }
 
   use() {
-    console.log('use()');
-    this.onUse && this.onUse(this.keyPath);
+    return this.onUse(this.keyPath);
   }
 }
