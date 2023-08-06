@@ -40,6 +40,8 @@ export default function App() {
       'proxyData.a.c.d': proxyData.a.c.d.get(),
       'proxyData.a.c.d.get()': proxyData.a.c.d.get(),
       'proxyData.a.c.d.peek()': proxyData.a.c.d.peek(),
+      'proxyData.a.c.__keyPath': proxyData.a.c.__keyPath,
+      'proxyData.a.c.d.__keyPath': proxyData.a.c.d.__keyPath,
     };
     console.log(
       '\n### proxyData.level1_1.level2_2.get();',

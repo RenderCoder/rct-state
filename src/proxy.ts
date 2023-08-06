@@ -3,7 +3,7 @@ import { get as _get } from 'lodash';
 type WrapType<T extends object> = {
   get(): T;
   peek(): T;
-  keyPath: string[];
+  __keyPath: string[];
 } & T;
 
 type DeepProxy<T> = {
@@ -25,7 +25,7 @@ export function wrapObject<T extends object>(
       if (prop === 'peek') {
         return () => _get(originalObject, keyPath);
       }
-      if (prop === 'keyPath') {
+      if (prop === '__keyPath') {
         return keyPath;
       }
       return Reflect.get(target, prop, receiver);
@@ -92,6 +92,10 @@ class Wrapper<T extends any> {
     // return this.keyPath;
     // return this.value;
     // return JSON.parse(stringifyWithCyclic(this.value));
+  }
+
+  get __keyPath() {
+    return this.keyPath;
   }
 
   toString() {
