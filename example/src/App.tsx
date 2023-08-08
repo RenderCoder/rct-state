@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { observable } from 'rct-state';
+import { useMount } from '../../src/hooks/useMount';
 
 const data = {
   view: {
@@ -34,6 +35,21 @@ export default function App() {
     const res = store$.view.count.peek();
     return res;
   });
+  const info = state$.demo.a.b[0]?.info.use();
+
+  useMount(() => {
+    let count = 0;
+    const id = setInterval(() => {
+      count += 1;
+      state$.demo.a.b[0]?.info.set('hello ' + Math.random());
+      if (count > 5) {
+        clearInterval(id);
+      }
+    }, 1000);
+    return () => clearInterval(id);
+  });
+
+  console.log('###info', info);
 
   store$.useObserve(
     () => {
@@ -41,6 +57,15 @@ export default function App() {
     },
     (countValue) => {
       console.log('### useObserve count on change', countValue);
+    }
+  );
+
+  state$.useObserve(
+    () => {
+      return state$.demo.a.b[0]?.info.peek();
+    },
+    (value) => {
+      console.log('#info change', value);
     }
   );
 
@@ -97,3 +122,54 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
+
+/**
+ * for multi-level nested data
+ */
+
+interface State {
+  playing: boolean;
+  /**
+   * duration in millseconds
+   */
+  duration: number;
+  /**
+   * curentTime in millseconds
+   */
+  currentTime: number;
+  /**
+   * current section index
+   */
+  sectionIndex: number;
+  sections: Array<{
+    filePath: string;
+    type: 'video' | 'image';
+    previewImage: string;
+  }>;
+  demo: { a: { b: Array<{ info: string }> } };
+}
+
+const initialState: State = {
+  playing: false,
+  duration: 10,
+  currentTime: 0,
+  sectionIndex: 0,
+  sections: [],
+  demo: { a: { b: [{ info: 'hello' }] } },
+};
+
+const state$ = observable(initialState);
+// @ts-ignore
+global.state$ = state$;
+
+const section = {
+  setData: (sections: State['sections']) => {
+    state$.sections.set(sections);
+    const sec = state$.sections.get();
+    sec[0]?.filePath;
+
+    // const info = state$.demo.a.b[0]?.info.get();
+  },
+};
+
+console.log('#section', section);

@@ -29,7 +29,8 @@ export function createDeepProxy<T extends object>(
           keyPath,
           originalObject,
           onSet,
-          onUse
+          onUse,
+          _target[property as keyof T]
         );
       }
 

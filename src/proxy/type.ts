@@ -4,17 +4,17 @@ import { Wrapper } from './wrapper';
 // // @ts-expect-error: Exported type alias 'Unwrap' has or is using private name 'U'.
 export type Unwrap<T> = T extends Wrapper<infer U> ? U : T;
 
-export type WrapType<T extends object> = {
-  get(): T;
-  peek(): T;
-  set(value: Unwrap<T>): void;
-  use(): T;
+export type WrapType<T extends object, P extends object> = {
+  get(): P;
+  peek(): P;
+  set(value: P): void;
+  use(): P;
   __keyPath: string[];
 } & T;
 
 export type DeepProxy<T> = {
   [P in keyof T]: T[P] extends object
-    ? WrapType<DeepProxy<T[P]>>
+    ? WrapType<DeepProxy<T[P]>, T[P]>
     : Wrapper<T[P]>;
 };
 

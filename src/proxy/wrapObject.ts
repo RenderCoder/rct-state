@@ -1,13 +1,14 @@
 import { get as _get } from 'lodash';
 import type { WrapType, OnSet, OnUse } from './type';
 
-export function wrapObject<T extends object>(
+export function wrapObject<T extends object, P extends object>(
   obj: T,
   keyPath: string[] = [],
   originalObject: object = {},
   onSet: OnSet<T>,
-  onUse: OnUse<T>
-): WrapType<T> {
+  onUse: OnUse<T>,
+  _: P
+): WrapType<T, P> {
   return new Proxy(obj, {
     get(target, prop: PropertyKey, receiver: any) {
       switch (prop) {
@@ -29,5 +30,5 @@ export function wrapObject<T extends object>(
           return Reflect.get(target, prop, receiver);
       }
     },
-  }) as WrapType<T>;
+  }) as WrapType<T, P>;
 }
