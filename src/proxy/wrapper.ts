@@ -35,12 +35,17 @@ export class Wrapper<T extends any> {
     return this.value;
   }
 
-  get(): T {
-    return _get(this.originalObject, this.keyPath);
+  get(): T extends (...args: any[]) => infer R ? R : T {
+    return this.peek();
   }
 
-  peek(): T {
-    return _get(this.originalObject, this.keyPath);
+  peek(): T extends (...args: any[]) => infer R ? R : T {
+    const value = _get(this.originalObject, this.keyPath);
+    if (typeof value === 'function') {
+      return value.bind(this.originalObject)();
+    } else {
+      return value;
+    }
   }
 
   get __keyPath() {

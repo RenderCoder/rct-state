@@ -147,6 +147,7 @@ interface State {
     previewImage: string;
   }>;
   demo: { a: { b: Array<{ info: string }> } };
+  percentage: () => number;
 }
 
 const initialState: State = {
@@ -156,6 +157,9 @@ const initialState: State = {
   sectionIndex: 0,
   sections: [],
   demo: { a: { b: [{ info: 'hello' }] } },
+  percentage() {
+    return this.currentTime / this.duration;
+  },
 };
 
 const state$ = observable(initialState);
@@ -171,5 +175,7 @@ const section = {
     // const info = state$.demo.a.b[0]?.info.get();
   },
 };
+
+// const percentage = state$.percentage.get();
 
 console.log('#section', section);
