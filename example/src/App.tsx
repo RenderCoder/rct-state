@@ -179,3 +179,12 @@ const section = {
 // const percentage = state$.percentage.get();
 
 console.log('#section', section);
+
+const unsub = state$.observe(
+  (state) => state.demo.a.b[0]?.info,
+  (value) => {
+    console.log('state$.observe info', value);
+  }
+);
+
+setTimeout(unsub, 2000);

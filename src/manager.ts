@@ -6,6 +6,7 @@ import type { Unwrap } from './proxy/type';
 import { useFunc } from './hooks/use';
 import { useSelector } from './hooks/useSelector';
 import { useObserve } from './hooks/useObserve';
+import { generateSubForSpecificChange } from './utils/subscribe';
 
 type Observable<T> = DeepProxy<T> & {
   useSelector: <R>(selector: (state: T) => R) => Unwrap<R>;
@@ -15,6 +16,10 @@ type Observable<T> = DeepProxy<T> & {
   ) => void;
   batch: (batchAction: () => void) => void;
   peek: () => T;
+  observe: <P>(
+    selector: (state: T) => P,
+    onChange: (value: P) => void
+  ) => () => void;
 };
 
 // target: const state$ = observable({ settings: { theme: 'dark' } })
@@ -36,6 +41,8 @@ class ObserverableManager<T extends object> {
             return this.batch;
           case 'peek':
             return this.peek;
+          case 'observe':
+            return this.observe;
           default:
             return Reflect.get(target, property, receiver);
         }
@@ -88,6 +95,24 @@ class ObserverableManager<T extends object> {
 
   peek = () => {
     return this.subject.getValue();
+  };
+
+  observe = <P>(
+    selector: (state: T) => P,
+    onChange: (value: P) => void
+  ): (() => void) => {
+    const sub = generateSubForSpecificChange({
+      subject: this.subject,
+      filter: selector,
+    }).subscribe(([_, next]) => {
+      onChange(next);
+    });
+
+    return () => {
+      if (sub && sub.unsubscribe) {
+        sub.unsubscribe();
+      }
+    };
   };
 }
 
