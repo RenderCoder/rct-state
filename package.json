@@ -1,6 +1,6 @@
 {
   "name": "rct-state",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Legend-State style state library with Rx for React, this project prioritizes the use of React Native and TypeScript support.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
