@@ -18,7 +18,6 @@ export function useSelector<T>({
       subject: subSource,
       filter: selectorFunction,
     }).subscribe(([_, next]) => {
-      console.log('rct-state useSelector', next);
       setValue(next);
     });
 
