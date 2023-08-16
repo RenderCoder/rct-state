@@ -14,7 +14,6 @@ export function useObserve<T, P>({
   onChangeFunction,
 }: UseObserveConfig<T, P>) {
   useMount(() => {
-    console.log('use() create sub');
     const sub = generateSubForSpecificChange({
       subject: subSource,
       filter: selectorFunction,

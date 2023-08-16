@@ -14,7 +14,6 @@ export function useSelector<T>({
 }: UseSelectorConfig<T>) {
   const [value, setValue] = useState(selectorFunction(subSource.value));
   useMount(() => {
-    console.log('use() create sub');
     const sub = generateSubForSpecificChange({
       subject: subSource,
       filter: selectorFunction,

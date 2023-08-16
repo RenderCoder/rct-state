@@ -12,7 +12,6 @@ interface UseConfig {
 export function useFunc({ keyPath, subSource }: UseConfig) {
   const [value, setValue] = useState(_get(subSource.value, keyPath));
   useMount(() => {
-    console.log('use() create sub');
     const sub = generateSubForSpecificChange({
       subject: subSource,
       filter: (data: any) => {
