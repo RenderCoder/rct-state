@@ -8,7 +8,7 @@ import { useSelector } from './hooks/useSelector';
 import { useObserve } from './hooks/useObserve';
 import { generateSubForSpecificChange } from './utils/subscribe';
 
-type Observable<T> = DeepProxy<T> & {
+export type Observable<T> = DeepProxy<T> & {
   useSelector: <R>(selector: (state: T) => R) => Unwrap<R>;
   useObserve: <P>(
     selector: (state: T) => P,
