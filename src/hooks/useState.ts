@@ -1,5 +1,6 @@
 import { useRef, useState as ReactUseState } from 'react';
 import { isEqual } from 'lodash';
+import { isSSR } from '../utils/isSSR';
 
 /**
  * A variant method of useState to avoid repeated calculation of
@@ -7,10 +8,10 @@ import { isEqual } from 'lodash';
  * @param initialState
  * @returns
  */
-export function useState<S>(
+function useStateForClient<S>(
   initialState: S
 ): [S, (value: S | ((prevState: S) => S)) => void] {
-  const stateValue = useRef(initialState);
+  const stateValue = useRef(initialState || {});
   const [state, _setState] = ReactUseState(initialState);
 
   const setState = (value: S | ((prevState: S) => S)): void => {
@@ -25,3 +26,5 @@ export function useState<S>(
 
   return [state, setState];
 }
+
+export const useState = isSSR ? ReactUseState : useStateForClient;

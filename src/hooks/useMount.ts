@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import type { EffectCallback } from 'react';
+import { isSSR } from '../utils/isSSR';
 
-export function useMount(callback: EffectCallback) {
+function useMountForClient(callback: EffectCallback) {
   const mounted = useRef(false);
   useEffect(() => {
     let clearAction: () => void | void;
@@ -20,3 +21,5 @@ export function useMount(callback: EffectCallback) {
     };
   }, [mounted]); // eslint-disable-line react-hooks/exhaustive-deps
 }
+
+export const useMount = isSSR ? useEffect : useMountForClient;

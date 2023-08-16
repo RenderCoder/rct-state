@@ -38,11 +38,11 @@ export default function App() {
   const info = state$.demo.a.b[0]?.info.use();
 
   useMount(() => {
-    let count = 0;
+    let _count = 0;
     const id = setInterval(() => {
-      count += 1;
+      _count += 1;
       state$.demo.a.b[0]?.info.set('hello ' + Math.random());
-      if (count > 5) {
+      if (_count > 5) {
         clearInterval(id);
       }
     }, 1000);
