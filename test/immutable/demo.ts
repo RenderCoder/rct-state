@@ -1,67 +1,7 @@
-import { Map, List } from 'immutable';
-
-type ListType<T> = T extends Immutable.List<infer E> ? E[] : never;
-
-function createProxiedList<T>(list: List<T>): ListType<T> {
-  return new Proxy(list, {
-    get(target: List<T>, key: PropertyKey) {
-      const numKey = Number(key);
-
-      if (Number.isNaN(numKey)) {
-        return Reflect.get(target, key);
-      }
-
-      const value = target.get(numKey);
-      if (Map.isMap(value)) {
-        return createProxiedMap(value);
-      } else if (List.isList(value)) {
-        return createProxiedList(value as List<any>);
-      }
-      return value;
-    },
-    set(target: List<T>, key: PropertyKey, value: any) {
-      const numKey = Number(key);
-      if (Number.isNaN(numKey)) {
-        return false;
-      }
-      target.set(numKey, value);
-      return true;
-    },
-  }) as any as ListType<T>;
-}
-
-// type MapType<T> = T extends Map<infer K, infer V> ? { key: K, value: V } : never;
-type MapType<T> = T extends Map<infer K, infer V>
-  ? Record<(K & string) | number | symbol, V>
-  : // @ts-ignore
-    Record<(K & string) | number | symbol, V>;
-
-function createProxiedMap<T extends Map<K, V>, K, V>(map: T): MapType<T> {
-  return new Proxy(map, {
-    get(target: T, key: string | symbol): V | undefined {
-      const mapValue: V | undefined = target.get(key as K);
-      if (mapValue === undefined) {
-        return mapValue;
-      }
-
-      if (Map.isMap(mapValue)) {
-        return createProxiedMap(
-          mapValue as Map<K, V>
-        ) as MapType<T>[keyof MapType<T>];
-      } else if (List.isList(mapValue)) {
-        return createProxiedList(
-          mapValue as List<any>
-        ) as MapType<T>[keyof MapType<T>];
-      }
-      return mapValue as MapType<T>[keyof MapType<T>];
-    },
-    set(target: T, key: string | symbol, value: any) {
-      target.set(key as K, value);
-      return true;
-    },
-  }) as MapType<T>;
-}
-
+import { Map } from 'immutable';
+import { observable } from './src/index';
+// import { wrapGetter } from './src/proxy/immutableGetter';
+import { memoryUsage } from './memory';
 // ---------------
 
 // 具体类型可根据实际数据结构定义
@@ -130,16 +70,13 @@ function createUser() {
 const user = createUser();
 console.log(user.toJS());
 
-type ToMap<T> = {
-  [K in keyof T]: T[K] extends object ? Map<keyof T[K], ToMap<T[K]>> : T[K];
-};
-
-function observer<T extends object>(data: T) {
-  return createProxiedMap(Map(data)) as T;
-}
+// type ToMap<T> = {
+//   [K in keyof T]: T[K] extends object ? Map<keyof T[K], ToMap<T[K]>> : T[K];
+// };
 
 // const proxyUser = createProxiedMap(user) as unknown as MapType<typeof user>;
-const proxyUser = observer(userData);
+/*
+const proxyUser = wrapGetter(userData);
 const messages = proxyUser.messages;
 messages.push({ time: Date.now(), content: 'Hello' });
 if (messages[0]) {
@@ -147,5 +84,42 @@ if (messages[0]) {
 }
 
 console.log('#id', proxyUser.id, proxyUser.messages[0]);
-
+*/
 setInterval(() => {}, 1000);
+
+const state$ = observable(userData);
+
+console.log('### get id', state$.id.get());
+
+state$.observe(
+  (state) => {
+    return state.id;
+  },
+  (id) => {
+    console.log('id changed', id);
+  }
+);
+
+state$.observe(
+  (state) => {
+    return state.messages.length;
+  },
+  (count) => {
+    console.log('message count changed', count);
+  }
+);
+
+/*
+setInterval(() => {
+  state$.id.set(Math.round(Math.random() * 100));
+  console.log('#memoryUsage', memoryUsage());
+}, 50);
+//*/
+
+//*
+setInterval(() => {
+  // @ts-ignore
+  state$.messages.set(state$.messages.get().push({ time: Date.now(), content: 'Hello' }));
+  console.log('#memoryUsage', memoryUsage());
+}, 100);
+//*/

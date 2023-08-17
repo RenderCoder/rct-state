@@ -8,6 +8,7 @@ import { useSelector } from './hooks/useSelector';
 import { useObserve } from './hooks/useObserve';
 import { generateSubForSpecificChange } from './utils/subscribe';
 import Immutable from 'immutable';
+import { wrapAsImmutable, wrapGetterForMap } from './proxy/immutableGetter';
 
 export type Observable<T> = DeepProxy<T> & {
   useSelector: <R>(selector: (state: T) => R) => Unwrap<R>;
@@ -27,9 +28,10 @@ export type Observable<T> = DeepProxy<T> & {
 
 class ObserverableManager<T extends object> {
   private state: Immutable.Map<keyof T, T[keyof T]>;
-  subject: BehaviorSubject<T>;
+  subject: BehaviorSubject<Immutable.Map<keyof T, T[keyof T]>>;
   _state$: DeepProxy<T>;
   batchProcessing: boolean = false;
+  stateGetter: T;
 
   get state$(): Observable<T> {
     return new Proxy(this._state$, {
@@ -56,8 +58,10 @@ class ObserverableManager<T extends object> {
   }
 
   constructor(state: T) {
-    this.state = Immutable.fromJS(state);
-    this.subject = new BehaviorSubject(state);
+    const wrappedState = wrapAsImmutable(state);
+    this.state = wrappedState.mapData;
+    this.stateGetter = wrappedState.getter;
+    this.subject = new BehaviorSubject(this.state);
     this._state$ = createDeepProxy(
       state,
       [],
@@ -68,11 +72,12 @@ class ObserverableManager<T extends object> {
   }
 
   onSet = (value: T, keyPath: string[]) => {
+    console.log('#onSet', { value, keyPath });
     this.state = this.state.updateIn(keyPath, () => value);
     if (this.batchProcessing) {
       return;
     } else {
-      this.subject.next(this.state.toJS() as T);
+      this.subject.next(this.state);
     }
   };
 
@@ -112,7 +117,11 @@ class ObserverableManager<T extends object> {
   ): (() => void) => {
     const sub = generateSubForSpecificChange({
       subject: this.subject,
-      filter: selector,
+      filter: () => {
+        const res = selector(wrapGetterForMap(this.state));
+        // console.log('#observe filter', obj, res);
+        return res;
+      },
     }).subscribe(([_, next]) => {
       onChange(next);
     });
