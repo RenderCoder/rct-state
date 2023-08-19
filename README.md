@@ -56,6 +56,13 @@ import { user$ } from './userData'
 
 export function UserPanel() {
   const { id, name } = user$.use()
+  const userId = user$.id.use()
+  const username = user$.useSelector((state) => state.id)
+
+  // watch value change
+  user$.useObserve((state) => state.name, username => {
+    console.log(`user name changed: ${username}`)
+  })
 
   return (
     <View>
