@@ -1,11 +1,11 @@
-import Immutable from 'immutable'
+import Immutable from 'immutable';
 // import { get as _get } from 'lodash';
 import type { OnSet, OnUse } from './type';
 
 export class Wrapper<T extends any> {
   value: any;
   keyPath: string[] = [];
-  originalObject: Immutable.Map<keyof T, T[keyof T]>;
+  originalObject: () => Immutable.Map<keyof T, T[keyof T]>;
   onSet: OnSet<T>;
   onUse: OnUse<T>;
   private proxy = new Proxy(this, {
@@ -20,7 +20,7 @@ export class Wrapper<T extends any> {
   constructor(
     value: any,
     keyPath: string[] = [],
-    originalObject: Immutable.Map<keyof T, T[keyof T]>,
+    originalObject: () => Immutable.Map<keyof T, T[keyof T]>,
     onSet: OnSet<T>,
     onUse: OnUse<T>
   ) {
@@ -41,7 +41,7 @@ export class Wrapper<T extends any> {
   }
 
   peek(): T extends (...args: any[]) => infer R ? R : T {
-    const value = this.originalObject.getIn(this.keyPath) // _get(this.originalObject, this.keyPath);
+    const value = this.originalObject().getIn(this.keyPath); // _get(this.originalObject, this.keyPath);
     if (typeof value === 'function') {
       return value.bind(this.originalObject)();
     } else {
@@ -51,6 +51,13 @@ export class Wrapper<T extends any> {
 
   get __keyPath() {
     return this.keyPath;
+  }
+
+  get __self() {
+    return {
+      value: this.value,
+      keyPath: this.keyPath,
+    };
   }
 
   toString() {

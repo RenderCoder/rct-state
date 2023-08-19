@@ -17,6 +17,10 @@ export function generateSubForSpecificChange<T, K>(config: {
    * for scenarios where the config.subject type is not BehaviorSubject
    */
   defaultData?: T;
+  /**
+   * debug mark
+   */
+  mark?: string;
 }) {
   const defaultValue: T = (config.subject as any).value
     ? (config.subject as any).value
@@ -36,6 +40,7 @@ export function generateSubForSpecificChange<T, K>(config: {
     }),
     pairwise(),
     filter(([prev, next]) => {
+      // console.log('## prev', prev, next, { mark: config.mark });
       return !_.isEqual(prev, next);
     }),
     defaultIfEmpty([defaultFilteredData, defaultFilteredData])

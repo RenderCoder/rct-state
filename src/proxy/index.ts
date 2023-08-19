@@ -7,12 +7,15 @@ export type { DeepProxy } from './type';
 export function createDeepProxy<T extends object>(
   target: T,
   path: string[] = [],
-  originalObject: Immutable.Map<keyof T, T[keyof T]>,
+  originalObject: () => Immutable.Map<keyof T, T[keyof T]>,
   onSet: OnSet<T>,
   onUse: OnUse<T>
 ): DeepProxy<T> {
   return new Proxy(target, {
     get(_target, property: PropertyKey, receiver: any) {
+      if (property === '__self') {
+        return _target;
+      }
       const keyPath = path.concat([property.toString()]);
       if (
         typeof _target[property as keyof T] === 'object' &&

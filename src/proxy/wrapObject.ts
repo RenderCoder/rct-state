@@ -5,7 +5,7 @@ import type { WrapType, OnSet, OnUse } from './type';
 export function wrapObject<T extends object, P extends object>(
   obj: T,
   keyPath: string[] = [],
-  originalObject: Immutable.Map<keyof T, T[keyof T]>,
+  originalObject: () => Immutable.Map<keyof T, T[keyof T]>,
   onSet: OnSet<T>,
   onUse: OnUse<T>,
   _: P
@@ -14,9 +14,9 @@ export function wrapObject<T extends object, P extends object>(
     get(target, prop: PropertyKey, receiver: any) {
       switch (prop) {
         case 'get':
-          return () => originalObject.getIn(keyPath);
+          return () => originalObject().getIn(keyPath);
         case 'peek':
-          return () => originalObject.getIn(keyPath);
+          return () => originalObject().getIn(keyPath);
         case 'set':
           return (value: T) => {
             onSet && onSet(value, keyPath);
@@ -27,6 +27,12 @@ export function wrapObject<T extends object, P extends object>(
           };
         case '__keyPath':
           return keyPath;
+        case 'isImmutableList':
+          return Immutable.isList(target);
+        case 'isImmutableMap':
+          return Immutable.isMap(target);
+        case '__self':
+          return target;
         default:
           return Reflect.get(target, prop, receiver);
       }

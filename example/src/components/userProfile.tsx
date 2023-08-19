@@ -4,7 +4,7 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  Input
+  Input,
 } from '@chakra-ui/react';
 import * as React from 'react';
 import { state$ } from '../state';
@@ -18,12 +18,26 @@ export function UserProfile() {
 
         <FormControl>
           <FormLabel>Name</FormLabel>
-          <Input type="text" value={user.name} />
+          <Input
+            type="text"
+            value={user.name}
+            onChange={(event) => {
+              // @ts-ignore
+              state$.user.name.set(event.target.value);
+            }}
+          />
         </FormControl>
 
         <FormControl>
           <FormLabel>Age</FormLabel>
-          <Input type="number" value={user.age} />
+          <Input
+            type="number"
+            value={user.age}
+            onChange={(event) => {
+              // @ts-ignore
+              state$.user.age.set(Number(event.target.value));
+            }}
+          />
         </FormControl>
 
         <FormControl>
@@ -33,7 +47,7 @@ export function UserProfile() {
             value={user.address.city}
             onChange={(event) => {
               // @ts-ignore
-              console.log('## City on change', event.target.value)
+              console.log('## City on change', event.target.value);
               // @ts-ignore
               state$.user.address.city.set(event.target.value);
             }}
@@ -42,7 +56,14 @@ export function UserProfile() {
 
         <FormControl>
           <FormLabel>Street</FormLabel>
-          <Input type="text" value={user.address.street} />
+          <Input
+            type="text"
+            value={user.address.street}
+            onChange={(event) => {
+              // @ts-ignore
+              state$.user.address.street.set(event.target.value);
+            }}
+          />
         </FormControl>
       </CardBody>
     </Card>
