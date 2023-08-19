@@ -10,12 +10,60 @@ npm install rct-state
 
 ## Usage
 
-```js
-import { multiply } from 'rct-state';
+Basic usage for pure JavaScript:
 
-// ...
+```tsx
+// file: userData.ts
 
-const result = await multiply(3, 7);
+import { observable } from 'rct-state';
+
+// define type for state
+interface User {
+  id: number;
+  name: string;
+}
+
+const user: User = {
+  id: 1,
+  name: 'jojo',
+}
+
+// create store
+export const user$ = observable(user);
+
+// get user id
+const userId = user$.id.get();
+
+// set user id
+user$.id.set(99);
+
+// watch user id change
+user$.observe((state) => {
+  return state.id
+}, (id) => {
+  console.log('user id changed:', id)
+})
+
+```
+
+Basic usage for React Native or React component:
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native'
+import { user$ } from './userData'
+
+
+export function UserPanel() {
+  const { id, name } = user$.use()
+
+  return (
+    <View>
+      <Text>ID: { id }</Text>
+      <Text>Name: { name }</Text>
+    </View>
+  )
+}
 ```
 
 ## Contributing
