@@ -66,12 +66,12 @@ export function SectionList() {
         <Button
           onClick={() => {
             state$.batch(() => {
-              const sections = state$.sections.get();
-              const count = sections.length;
+              const sectionArray = state$.sections.get();
+              const count = sectionArray.length;
               for (let i = 0; i < count; i++) {
                 // @ts-ignore
                 state$.sections[i].set({
-                  ...sections[i],
+                  ...sectionArray[i],
                   [newProperty]: '',
                 });
               }

@@ -23,7 +23,7 @@ export function useObserve<T extends object, P>({
       filter: () => {
         return selectorFunction(wrapGetterForMap<T>(getState()));
       },
-      mark: 'useObserve'
+      mark: 'useObserve',
     }).subscribe(([_, next]) => {
       onChangeFunction(next);
     });
@@ -33,5 +33,5 @@ export function useObserve<T extends object, P>({
         sub.unsubscribe();
       }
     };
-  }, []);
+  }, [subSource, getState, onChangeFunction, selectorFunction]);
 }

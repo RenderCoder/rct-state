@@ -1,4 +1,4 @@
-import Immutable from 'immutable'
+import Immutable from 'immutable';
 import { Wrapper } from './wrapper';
 import type { DeepProxy, OnSet, OnUse } from './type';
 import { wrapObject } from './wrapObject';
@@ -18,10 +18,7 @@ export function createDeepProxy<T extends object>(
       }
       const keyPath = path.concat([property.toString()]);
       const realValue = originalObject().getIn(keyPath);
-      if (
-        typeof realValue === 'object' &&
-        realValue !== null
-      ) {
+      if (typeof realValue === 'object' && realValue !== null) {
         return wrapObject(
           // @ts-ignore
           createDeepProxy(

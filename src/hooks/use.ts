@@ -4,7 +4,6 @@ import type { BehaviorSubject } from 'rxjs';
 import Immutable from 'immutable';
 import { generateSubForSpecificChange } from '../utils/subscribe';
 
-
 interface UseConfig<T> {
   keyPath: string[];
   subSource: BehaviorSubject<Immutable.Map<keyof T, T[keyof T]>>;
@@ -20,7 +19,7 @@ export function useFunc<T>({ keyPath, subSource, getState }: UseConfig<T>) {
         // console.log('#useFunc filter', keyPath, getState().getIn(keyPath));
         return getState().getIn(keyPath);
       },
-      mark: 'useFunc'
+      mark: 'useFunc',
     }).subscribe(([_, next]) => {
       // console.log('#useFunc next', next);
       setValue(next);
@@ -31,7 +30,7 @@ export function useFunc<T>({ keyPath, subSource, getState }: UseConfig<T>) {
         sub.unsubscribe();
       }
     };
-  }, []);
+  }, [keyPath, subSource, getState]);
 
   return value;
 }

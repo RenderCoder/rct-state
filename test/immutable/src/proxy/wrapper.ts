@@ -1,4 +1,4 @@
-import Immutable from 'immutable'
+import Immutable from 'immutable';
 // import { get as _get } from 'lodash';
 import type { OnSet, OnUse } from './type';
 
@@ -41,7 +41,7 @@ export class Wrapper<T extends any> {
   }
 
   peek(): T extends (...args: any[]) => infer R ? R : T {
-    const value = this.originalObject.getIn(this.keyPath) // _get(this.originalObject, this.keyPath);
+    const value = this.originalObject.getIn(this.keyPath); // _get(this.originalObject, this.keyPath);
     if (typeof value === 'function') {
       return value.bind(this.originalObject)();
     } else {

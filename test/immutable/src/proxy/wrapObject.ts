@@ -1,6 +1,5 @@
-import { get as _get } from 'lodash';
 import Immutable from 'immutable';
-import type { WrapType, OnSet, OnUse } from './type';
+import type { OnSet, OnUse, WrapType } from './type';
 
 export function wrapObject<T extends object, P extends object>(
   obj: T,

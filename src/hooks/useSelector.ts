@@ -2,9 +2,9 @@ import Immutable from 'immutable';
 import { useCallback, useEffect } from 'react';
 import type { BehaviorSubject } from 'rxjs';
 import { wrapGetterForMap } from '../proxy/immutableGetter';
+import { isImmutableObject } from '../utils/isImmutableObject';
 import { generateSubForSpecificChange } from '../utils/subscribe';
 import { useState } from './useState';
-import { isImmutableObject } from '../utils/isImmutableObject';
 
 interface UseSelectorConfig<T> {
   selectorFunction: (state: T) => any;
@@ -30,9 +30,10 @@ export function useSelector<T extends object>({
         }
         return res;
       },
-    [selectorFunction]
+    [selectorFunction, getState]
   );
   const [value, setValue] = useState(wrappedSelectorFunction(true)());
+
   useEffect(() => {
     const sub = generateSubForSpecificChange({
       subject: subSource,
@@ -51,7 +52,7 @@ export function useSelector<T extends object>({
         sub.unsubscribe();
       }
     };
-  }, [wrappedSelectorFunction]);
+  }, [wrappedSelectorFunction, getState, subSource]);
 
   return value;
 }

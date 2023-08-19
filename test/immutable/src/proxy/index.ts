@@ -1,4 +1,4 @@
-import Immutable from 'immutable'
+import Immutable from 'immutable';
 import { Wrapper } from './wrapper';
 import type { DeepProxy, OnSet, OnUse } from './type';
 import { wrapObject } from './wrapObject';

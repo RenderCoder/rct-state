@@ -119,7 +119,9 @@ setInterval(() => {
 //*
 setInterval(() => {
   // @ts-ignore
-  state$.messages.set(state$.messages.get().push({ time: Date.now(), content: 'Hello' }));
+  state$.messages.set(
+    state$.messages.get().concat({ time: Date.now(), content: 'Hello' })
+  );
   console.log('#memoryUsage', memoryUsage());
 }, 100);
 //*/

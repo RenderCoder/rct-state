@@ -1,14 +1,13 @@
-import { BehaviorSubject } from 'rxjs';
-import { set as _set } from 'lodash';
-import { createDeepProxy } from './proxy';
-import type { DeepProxy } from './proxy';
-import type { Unwrap } from './proxy/type';
-import { useFunc } from './hooks/use';
-import { useSelector } from './hooks/useSelector';
-import { useObserve } from './hooks/useObserve';
-import { generateSubForSpecificChange } from './utils/subscribe';
 import Immutable from 'immutable';
+import { BehaviorSubject } from 'rxjs';
+import { useFunc } from './hooks/use';
+import { useObserve } from './hooks/useObserve';
+import { useSelector } from './hooks/useSelector';
+import type { DeepProxy } from './proxy';
+import { createDeepProxy } from './proxy';
 import { wrapAsImmutable, wrapGetterForMap } from './proxy/immutableGetter';
+import type { Unwrap } from './proxy/type';
+import { generateSubForSpecificChange } from './utils/subscribe';
 
 export type Observable<T> = DeepProxy<T> & {
   useSelector: <R>(selector: (state: T) => R) => Unwrap<R>;
