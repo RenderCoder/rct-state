@@ -4,7 +4,7 @@ import { state$ } from '../state';
 
 export function StateValue() {
   const stateValue = state$.useSelector((state) => state);
-  console.log('# stateValue', stateValue);
+
   return (
     <Card width="100%">
       <CardBody width="100%">

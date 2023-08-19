@@ -5,6 +5,7 @@ import { state$ } from './state';
 // components
 import { StateValue } from './components/stateValue';
 import { UserProfile } from './components/userProfile';
+import { SectionList } from './components/sectionList';
 
 export default function App() {
   console.log('### state$.count', state$.count.get());
@@ -44,6 +45,16 @@ export default function App() {
   );
   //*/
 
+  state$.useObserve(
+    (state) => {
+      // @ts-ignore
+      return state.sections[3]?.desc;
+    },
+    (desc) => {
+      console.log('#section 3 desc change:', desc);
+    }
+  );
+
   console.log('### count', count, count$);
 
   return (
@@ -51,6 +62,7 @@ export default function App() {
       <Stack direction="column" width="100%">
         <StateValue />
         <UserProfile />
+        <SectionList />
         <View style={styles.container}>
           <TouchableOpacity
             onPress={() => {

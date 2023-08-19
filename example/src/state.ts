@@ -19,8 +19,8 @@ export interface State {
   sectionIndex: number;
   sections: Array<{
     filePath: string;
-    type: 'video' | 'image';
-    previewImage: string;
+    // type: 'video' | 'image';
+    // previewImage: string;
   }>;
   demo: { a: { b: Array<{ info: string }> } };
   percentage: () => number;
@@ -42,7 +42,7 @@ const initialState: State = {
   duration: 10,
   currentTime: 0,
   sectionIndex: 0,
-  sections: [],
+  sections: [{ filePath: 'a' }, { filePath: 'b' }, { filePath: 'c' }],
   demo: { a: { b: [{ info: 'hello' }] } },
   percentage() {
     return this.currentTime / this.duration;

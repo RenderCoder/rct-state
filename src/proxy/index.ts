@@ -12,19 +12,20 @@ export function createDeepProxy<T extends object>(
   onUse: OnUse<T>
 ): DeepProxy<T> {
   return new Proxy(target, {
-    get(_target, property: PropertyKey, receiver: any) {
+    get(_target, property: PropertyKey) {
       if (property === '__self') {
         return _target;
       }
       const keyPath = path.concat([property.toString()]);
+      const realValue = originalObject().getIn(keyPath);
       if (
-        typeof _target[property as keyof T] === 'object' &&
-        _target[property as keyof T] !== null
+        typeof realValue === 'object' &&
+        realValue !== null
       ) {
         return wrapObject(
           // @ts-ignore
           createDeepProxy(
-            _target[property as keyof T] as any,
+            realValue as any,
             path.concat([property.toString()]),
             originalObject,
             onSet,
@@ -34,12 +35,12 @@ export function createDeepProxy<T extends object>(
           originalObject,
           onSet,
           onUse,
-          _target[property as keyof T]
+          realValue
         );
       }
 
-      const value = Reflect.get(_target, property, receiver); // target[property as keyof T];
-      return new Wrapper(value, keyPath, originalObject, onSet, onUse);
+      // const value = Reflect.get(_target, property, receiver); // target[property as keyof T];
+      return new Wrapper(realValue, keyPath, originalObject, onSet, onUse);
     },
     set(_target, property: PropertyKey, value: any, receiver: any) {
       return Reflect.set(_target, property, value, receiver);
