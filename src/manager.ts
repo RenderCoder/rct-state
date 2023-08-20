@@ -21,6 +21,7 @@ export type Observable<T> = DeepProxy<T> & {
     selector: (state: T) => P,
     onChange: (value: P) => void
   ) => () => void;
+  __immutable__: Immutable.Map<keyof T, T[keyof T]>;
 };
 
 // target: const state$ = observable({ settings: { theme: 'dark' } })
@@ -46,6 +47,8 @@ class ObserverableManager<T extends object> {
             return this.peek;
           case 'observe':
             return this.observe;
+          case '__immutable__':
+            return this.state;
           default:
             return Reflect.get(target, property, receiver);
         }
